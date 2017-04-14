@@ -1,7 +1,15 @@
-CC=gcc
-CFLAGS=-Wall -std=gnu99 -O3 -march=native -DSUPERCOP
-FILES=amd64cpuinfo.c bench.c blake2b.c
-HEADERS=blake2.h blake2b-load-sse2.h blake2b-load-sse41.h blake2b-round.h blake2-impl.h blake2-config.h
+CFLAGS = -O3 -Wall -march=native -Wno-unused-functions
 
-twblake2b: $(FILES) $(HEADERS)
-	$(CC) $(CFLAGS) $(FILES) -o twblake2b
+all: filehash benchmark test
+
+filehash: filehash.c fasthash.c blake2b/blake2bp.c blake2b/blake2b.c
+	gcc $(CFLAGS) -o filehash filehash.c fasthash.c blake2b/blake2bp.c blake2b/blake2b.c
+
+benchmark: benchmark.c fasthash.c blake2b/blake2bp.c blake2b/blake2b.c
+	gcc $(CFLAGS) -o benchmark benchmark.c fasthash.c blake2b/blake2bp.c blake2b/blake2b.c
+
+test: test.c blake2b/blake2bp.c blake2b/blake2b.c
+	gcc $(CFLAGS) -o test test.c blake2b/blake2bp.c blake2b/blake2b.c
+
+clean:
+	rm -f *.o filehash benchmark test

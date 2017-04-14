@@ -1,0 +1,65 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "blake2.h"
+#include "blake2b-common.h"
+#include "blake2b-load-avx2-simple.h"
+
+#define BLAKE2B_G1_V1(a, b, c, d) do {     \
+  a = ADD(a, b); d = XOR(d, a); d = ROT32(d); \
+  c = ADD(c, d); b = XOR(b, c); b = ROT24(b); \
+} while(0)
+
+#define BLAKE2B_G2_V1(a, b, c, d) do {     \
+  a = ADD(a, b); d = XOR(d, a); d = ROT16(d); \
+  c = ADD(c, d); b = XOR(b, c); b = ROT63(b); \
+} while(0)
+
+#define BLAKE2B_DIAG_V1(a, b, c, d) do {                 \
+  d = _mm256_permute4x64_epi64(d, _MM_SHUFFLE(2,1,0,3)); \
+  c = _mm256_permute4x64_epi64(c, _MM_SHUFFLE(1,0,3,2)); \
+  b = _mm256_permute4x64_epi64(b, _MM_SHUFFLE(0,3,2,1)); \
+} while(0)
+
+#define BLAKE2B_UNDIAG_V1(a, b, c, d) do {               \
+  d = _mm256_permute4x64_epi64(d, _MM_SHUFFLE(0,3,2,1)); \
+  c = _mm256_permute4x64_epi64(c, _MM_SHUFFLE(1,0,3,2)); \
+  b = _mm256_permute4x64_epi64(b, _MM_SHUFFLE(2,1,0,3)); \
+} while(0)
+
+#define BLAKE2B_G_V4(a, b, c, d) do {                       \
+  a = ADD(a, b); d = XOR(d, a); d = ROT32(d);                        \
+  c = ADD(c, d); b = XOR(b, c); b = ROT24(b);                        \
+  a = ADD(a, b); d = XOR(d, a); d = ROT16(d);                        \
+  c = ADD(c, d); b = XOR(b, c); b = ROT63(b);                        \
+} while(0)
+
+int blake2bp_permute(__m256i v[16]) {
+  int r;
+  for(r = 0; r < 12; ++r) {
+    BLAKE2B_G_V4(v[0], v[4], v[ 8], v[12]);
+    BLAKE2B_G_V4(v[1], v[5], v[ 9], v[13]);
+    BLAKE2B_G_V4(v[2], v[6], v[10], v[14]);
+    BLAKE2B_G_V4(v[3], v[7], v[11], v[15]);
+    BLAKE2B_G_V4(v[0], v[5], v[10], v[15]);
+    BLAKE2B_G_V4(v[1], v[6], v[11], v[12]);
+    BLAKE2B_G_V4(v[2], v[7], v[ 8], v[13]);
+    BLAKE2B_G_V4(v[3], v[4], v[ 9], v[14]);
+  }
+}
+
+int blake2b_permute(__m256i v[4]) {
+  int r;
+  __m256i a = v[0], b = v[1], c = v[2], d = v[3];
+  for(r = 0; r < 12; ++r) {
+    BLAKE2B_G1_V1(a, b, c, d);
+    BLAKE2B_G2_V1(a, b, c, d);
+    BLAKE2B_DIAG_V1(a, b, c, d);
+    BLAKE2B_G1_V1(a, b, c, d);
+    BLAKE2B_G2_V1(a, b, c, d);
+    BLAKE2B_UNDIAG_V1(a, b, c, d);
+  }
+  v[0] = a; v[1] = b; v[2] = c, v[3] = d;
+}
