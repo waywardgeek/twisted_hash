@@ -145,8 +145,10 @@ four dangling leaf edges.  The number of additional nodes is leaves*3/4, which
 is always a power of 3.  The graph looks identical if you pick any one of the
 new nodes and make it the root of the tree.
 
-See Min6CycleGraph.pdf for a graph of degree 4 nodes with no cycles less than 6
-long.  There are 26 nodes.  Any Eulerian path on this graph results in a
+Look at the graph below, which is a graph of degree 4 nodes with no cycles less
+than 6 long.  There are 26 nodes.  Any Eulerian path on this graph results in a
 reasonable absorb sequence.  One such path is:
 
     abfrmypwnzkcjuqeoxltkvgbhyjsftpeacirqzhxiwguldmvosnd
+
+![twisted hash graph](/Min6Cycle.png)
