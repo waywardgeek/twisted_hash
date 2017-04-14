@@ -1,4 +1,4 @@
-#include "fasthash.h"
+#include "twistedhash.h"
 #include "uint1024.h"
 
 #include <stdio.h>

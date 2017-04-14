@@ -1,5 +1,5 @@
-#include "fasthash.h"
-#include "fasthash_internal.h"
+#include "twistedhash.h"
+#include "twisted_internal.h"
 #include "blake2b/blake2b.h"
 
 #include <stdio.h>
@@ -231,7 +231,7 @@ void fhFinal(fhContext *context, void *digest) {
   }
   // At this point, state[0] contains the low 256-bits of each lane.  Process
   // the rest with 1 lane of BLAKE2b using state[0].
-  if (context_int->num_bytes == 0 && context_int->compressed) {
+  if (context_int->num_bytes == 0) {
     // Force absorb of one block to mix lanes.
     context_int->num_bytes = FH_BLOCK_SIZE;
   }
