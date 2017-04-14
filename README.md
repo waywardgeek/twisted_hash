@@ -33,11 +33,10 @@ Now lets instead absorb the input stream twice, but the second time in a
 different order.  The new sequence is ABCDEFGHEBGDAFCH.  The second pass simply
 subtracts 3 from the previous position each time, wrapping in the natural way.
 
-Consider the computation graph, shown in TwistedHashing.pdf, where there are 8
-nodes for the 8 message blocks, and arrows are drawn to indicate the absorb
-pattern.
+Consider the computation graph, shown below, where there are 8 nodes for the 8
+message blocks, and arrows are drawn to indicate the absorb pattern.
 
-![twisted hash graph](/TwistedHashing.pdf)
+![twisted hash graph](/TwistedHashing.png)
 
 Look for loops in this graph.  I claim the shortest loop has 4 nodes.
 We can create a faster hashing algorithm using this access pattern with equal
