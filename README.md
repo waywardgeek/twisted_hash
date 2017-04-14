@@ -16,6 +16,10 @@ set of benchmarks for various algorithms:
 
     https://bench.cr.yp.to/results-hash.html
 
+Samuel Neves' AVX2 optimized BLAKE2bp code is at:
+
+    https://github.com/sneves/blake2-avx2
+
 This implemenation combines Samuel Neves' 4-way parallel AVX2 BLAKE2b
 implementation with a twisted hashing pattern to roughly double the speed.  At
 the same time, it is good for both small and large messages, and efficient on
