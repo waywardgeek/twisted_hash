@@ -1,7 +1,27 @@
 # Twisted Hash
 
 This is a very fast hashing algorithm, currently using the BLAKE2b AVX2
-optimized permutation.
+optimized permutation.  On my Core i7 Haswell laptop, it achieves:
+
+    long messages: 0.66 cycles/byte
+    4096 bytes: 0.77 cycles/byte
+    1536 bytes: 1.62 cycles/byte
+    576 bytes: 2.35 cycles/byte
+    64 bytes: 6.16 cycles/byte
+    8 bytes: 49.35 cycles/byte
+
+The targetted security level is 256 bits.  It should have the equivalent
+defense as 12 rounds of BLAKE2b.  For comparison, here is a fairly extensive
+set of benchmarks for various algorithms:
+
+    https://bench.cr.yp.to/results-hash.html
+
+This implemenation combines Samuel Neves' 4-way parallel AVX2 BLAKE2b
+implementation with a twisted hashing pattern to roughly double the speed.  At
+the same time, it is good for both small and large messages, and efficient on
+32-bit processors without SIMD units, as well as AVX2 enabled CPUs.
+
+##Example
 
 This idea is best explained with an example.  Suppose we have a hashing sponge
 H which has a multiple of 4 hashing rounds, such Keccak-1600, which uses 24
@@ -15,7 +35,11 @@ subtracts 3 from the previous position each time, wrapping in the natural way.
 
 Consider the computation graph, shown in TwistedHashing.pdf, where there are 8
 nodes for the 8 message blocks, and arrows are drawn to indicate the absorb
-pattern.  Look for loops in this graph.  I claim the shortest loop has 4 nodes.
+pattern.
+
+![twisted hash graph](/TwistedHashing.pdf)
+
+Look for loops in this graph.  I claim the shortest loop has 4 nodes.
 We can create a faster hashing algorithm using this access pattern with equal
 security.  In this case, what happens when we reduce the number of rounds from
 24 to 6?  The overall hashing rounds is then 2*8*6 = 96, exactly 1/2 the number
@@ -64,6 +88,8 @@ original hash.
 
 This proof can be extended to cover all attacks that assume that some
 mathematicla property propagates through rounds with constant probabilty.
+
+## Larger Graphs
 
 This twisted absorb pattern can be extended to graphs with minimum loop sizes
 of N, for arbitrary N, if the block size is large enough.  However, the block
