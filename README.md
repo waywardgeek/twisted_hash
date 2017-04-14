@@ -1,7 +1,3 @@
-## Warning: Do not use this code.
-It has not had enough cryptanalysis, and the code has not been carefully
-reviewd.
-
 # Twisted Hash
 
 This is a very fast hashing algorithm, currently using the BLAKE2b AVX2
