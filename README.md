@@ -99,7 +99,6 @@ of rounds.  The resulting total hash rounds is 2*R/N.
 In practical terms, we will want N to be not so large that the data does not
 fit into L1 cache, or the second pass will load too slowly.
 
-## Optimal Graphs
 I found a sequence of increasing cycle-length graphs of optimal size:
 
 min cycle 3: 5 nodes
