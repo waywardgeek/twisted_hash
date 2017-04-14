@@ -29,7 +29,7 @@ implementation with a twisted hashing pattern to roughly double the speed.  At
 the same time, it is good for both small and large messages, and efficient on
 32-bit processors without SIMD units, as well as AVX2 enabled CPUs.
 
-##Example
+## Example
 
 This idea is best explained with an example.  Suppose we have a hashing sponge
 H which has a multiple of 4 hashing rounds, such Keccak-1600, which uses 24
