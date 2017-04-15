@@ -124,13 +124,13 @@ sequence then A and B will not appear closer than N-2 blocks apart elsewhere.
 The first set of such graphs, assuming they can all be built successfully, have
 these parameters:
 
-    cycle length | 4 | 6 | 8 | 10 | 12
-    --- | --- | ---
-    tree leaves | 4 | 12 | 36 | 108 | 324
-    dangling edges | 12 | 36 | 108 | 324 | 972
-    tree nodes | 5 | 17 | 53 | 161 | 485
-    new nodes | 3 | 9 | 27 | 81 | 243
-    graph size | 8 | 26 | 80 | 242 | 728
+| cycle length | 4 | 6 | 8 | 10 | 12 |
+| --- | --- | --- |
+| tree leaves | 4 | 12 | 36 | 108 | 324 |
+| dangling edges | 12 | 36 | 108 | 324 | 972 |
+| tree nodes | 5 | 17 | 53 | 161 | 485 |
+| new nodes | 3 | 9 | 27 | 81 | 243 |
+| graph size | 8 | 26 | 80 | 242 | 728 |
 
 The graph size is
 
