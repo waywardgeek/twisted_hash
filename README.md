@@ -73,11 +73,11 @@ B'C' results in the same sponge state as absorbing BC is P.  Further assume the
 attacker can do the reverse, and find a change to B give a a change to C that
 works with probability P.
 
-Assume the attacker finds solutions B'C' with probability P.  On the second
-pass, we travers B->G, so we need to use the differential again on this edge.
-That means we had to use the differential on the edge F->G on the first pass.
-Continuing the second pass, we absorbe F->C, which fortunately for the attacker
-is the right differential.  The total differentials that have to work are:
+On the second pass, we travers B->G, so we need to use the differential again
+on this edge.  That means we had to use the differential on the edge F->G on
+the first pass.  Continuing the second pass, we absorbe F->C, which fortunately
+for the attacker is the right differential.  The total differentials that have
+to work are:
 
     B->C, F->G, B->G, F->C
 
