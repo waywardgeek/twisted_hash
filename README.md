@@ -10,9 +10,8 @@ optimized permutation.  On my Core i7 Haswell laptop, it achieves:
     64 bytes: 6.16 cycles/byte
     8 bytes: 49.35 cycles/byte
 
-The targetted security level is 256 bits.  It should have the equivalent
-defense as 12 rounds of BLAKE2b.  For comparison, here is a fairly extensive
-set of benchmarks for various algorithms:
+For comparison, here is a fairly extensive set of benchmarks for various
+algorithms:
 
     https://bench.cr.yp.to/results-hash.html
 
@@ -24,6 +23,9 @@ This implemenation combines Samuel Neves' 4-way parallel AVX2 BLAKE2b
 implementation with a twisted hashing pattern to roughly double the speed.  At
 the same time, it is good for both small and large messages, and efficient on
 32-bit processors without SIMD units, as well as AVX2 enabled CPUs.
+
+However, there are attacks that are stronger against this scheme than for the
+full 12-round BLAKE2b.
 
 ## Example
 
@@ -65,32 +67,30 @@ of rounds.  This assumption where mathematical properties are assumed to
 propate with a fixed probability per round is commonly used in differential
 attacks, rotational attacks, etc.
 
-Assume the attacker finds a differential function for modifying B given a
-change to A and a current sponge state such that the likelihood that absorbing
-A'B' results in the same sponge state as absorbing AB is P.  Further assume the
-attacker can do the reverse, and find a change to A give a a change to B that
+Assume the attacker finds a differential function for modifying C given a
+change to B and a current sponge state such that the likelihood that absorbing
+B'C' results in the same sponge state as absorbing BC is P.  Further assume the
+attacker can do the reverse, and find a change to B give a a change to C that
 works with probability P.
 
-Assume the attacker finds solutions A'B' with probability P.  We have a loop in
-the computation graph:
+Assume the attacker finds solutions B'C' with probability P.  On the second
+pass, we travers B->G, so we need to use the differential again on this edge.
+That means we had to use the differential on the edge F->G on the first pass.
+Continuing the second pass, we absorbe F->C, which fortunately for the attacker
+is the right differential.  The total differentials that have to work are:
 
-    A->B, A->F, B->G, and F->G
+    B->C, F->G, B->G, F->C
 
-The attacker only satisfied the first edge so far.  The attacker's A'B' restore
-the sponge state after absorbing the sequence A'B', but later the sponge will
-have to absorb B' again, which needs to be corrected by a change to G, which we
-call G'.  Absorbing B'G' works with probability P, so the combined probability
-so far is P^2.  Next, the attacker absorbs A', which needs to be corrected by a
-change to F, called F'.  The chance of this working is now P^3.  Finally, we
-failed to correct the edge F->G, which happens before absorbing B' for the
-second time.  The likelihood of these somewhat unrelated changes to F and G
-working out is no higher than the differential probability, so the total
-combined probability is at least P^4.  Therefore, the differential attack is no
-better against the 2-pass twisted hash with 1/4 the rounds than against the
-original hash.
+This only works with probability P^4, given our assumption about probabilities
+per round.  This proof can be extended to cover all attacks that assume that
+some mathematicla property propagates through rounds with constant probabilty.
 
-This proof can be extended to cover all attacks that assume that some
-mathematicla property propagates through rounds with constant probabilty.
+However, the assuption that attacks succeed with probability P per round is
+flawed.  For example, in the graph above, assume the attacker can choose A such
+that the differential B'C' always works.  For example, when using the BLAKE2b
+permutation, choose A such that there are no carries during addition, and using
+a differential that assumes this is the case.  This improves the attack
+probability to P^3.
 
 ## Larger Graphs
 
