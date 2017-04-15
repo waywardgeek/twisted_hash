@@ -1,5 +1,8 @@
 # Twisted Hash
 
+There are attacks that are stronger against this scheme than for the full
+12-round BLAKE2b, so please do not use this scheme as-is.
+
 This is a very fast hashing algorithm, currently using the BLAKE2b AVX2
 optimized permutation.  On my Core i7 Haswell laptop, it achieves:
 
@@ -23,9 +26,6 @@ This implemenation combines Samuel Neves' 4-way parallel AVX2 BLAKE2b
 implementation with a twisted hashing pattern to roughly double the speed.  At
 the same time, it is good for both small and large messages, and efficient on
 32-bit processors without SIMD units, as well as AVX2 enabled CPUs.
-
-However, there are attacks that are stronger against this scheme than for the
-full 12-round BLAKE2b.
 
 ## Example
 
